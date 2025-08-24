@@ -157,5 +157,149 @@ namespace SplitSmart.API.Services
 
             return balance;
         }
+
+        public async Task<bool> UpdateGroup(int groupId, UpdateGroupDto updateGroupDto, int userId)
+        {
+            var group = await _context.Groups.FindAsync(groupId);
+
+            if (group == null)
+            {
+                return false;
+            }
+
+            // Check if user is admin
+            var isAdmin = await _context.GroupMembers
+                .AnyAsync(gm => gm.GroupId == groupId && gm.UserId == userId && gm.Role == "Admin");
+
+            if (!isAdmin)
+            {
+                return false;
+            }
+
+            group.Name = updateGroupDto.Name;
+            group.Description = updateGroupDto.Description;
+            group.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteGroup(int groupId, int userId)
+        {
+            var group = await _context.Groups.FindAsync(groupId);
+
+            if (group == null)
+            {
+                return false;
+            }
+
+            // Only creator can delete
+            if (group.CreatedById != userId)
+            {
+                return false;
+            }
+
+            _context.Groups.Remove(group);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> AddMember(int groupId, AddMemberDto addMemberDto, int userId)
+        {
+            // Check if current user is admin
+            var isAdmin = await _context.GroupMembers
+                .AnyAsync(gm => gm.GroupId == groupId && gm.UserId == userId && gm.Role == "Admin");
+
+            if (!isAdmin)
+            {
+                return false;
+            }
+
+            // Find user by email
+            var newUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == addMemberDto.Email);
+
+            if (newUser == null)
+            {
+                return false;
+            }
+
+            // Check if already a member
+            var existingMember = await _context.GroupMembers
+                .AnyAsync(gm => gm.GroupId == groupId && gm.UserId == newUser.Id);
+
+            if (existingMember)
+            {
+                return false;
+            }
+
+            var groupMember = new GroupMember
+            {
+                GroupId = groupId,
+                UserId = newUser.Id,
+                Role = "Member",
+                JoinedAt = DateTime.UtcNow
+            };
+
+            _context.GroupMembers.Add(groupMember);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveMember(int groupId, int memberUserId, int currentUserId)
+        {
+            // Check if current user is admin
+            var isAdmin = await _context.GroupMembers
+                .AnyAsync(gm => gm.GroupId == groupId && gm.UserId == currentUserId && gm.Role == "Admin");
+
+            if (!isAdmin)
+            {
+                return false;
+            }
+
+            // Cannot remove creator
+            var group = await _context.Groups.FindAsync(groupId);
+            if (group?.CreatedById == memberUserId)
+            {
+                return false;
+            }
+
+            var groupMember = await _context.GroupMembers
+                .FirstOrDefaultAsync(gm => gm.GroupId == groupId && gm.UserId == memberUserId);
+
+            if (groupMember == null)
+            {
+                return false;
+            }
+
+            _context.GroupMembers.Remove(groupMember);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<BalanceDto>> GetGroupBalances(int groupId, int userId)
+        {
+            // Check if user is a member
+            var isMember = await _context.GroupMembers
+                .AnyAsync(gm => gm.GroupId == groupId && gm.UserId == userId);
+
+            if (!isMember)
+            {
+                return new List<BalanceDto>();
+            }
+
+            var members = await _context.GroupMembers
+                .Where(gm => gm.GroupId == groupId)
+                .Include(gm => gm.User)
+                .ToListAsync();
+
+            var balances = members.Select(m => new BalanceDto
+            {
+                UserId = m.UserId,
+                UserName = m.User.Name,
+                Balance = CalculateMemberBalance(groupId, m.UserId)
+            }).ToList();
+
+            return balances;
+        }
     }
 }
