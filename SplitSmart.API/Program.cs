@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SplitSmart.API.Data;
+using SplitSmart.API.Helpers;
+using SplitSmart.API.Interfaces;
+using SplitSmart.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,12 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Register services
+builder.Services.AddScoped<JwtHelper>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
 
 // CORS configuration
 builder.Services.AddCors(options =>
