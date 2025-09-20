@@ -1,30 +1,44 @@
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { Text, View, StyleSheet } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { AuthProvider, AuthContext } from "./src/contexts/AuthContext";
+import AuthNavigator from "./src/navigation/AuthNavigator";
+import MainNavigator from "./src/navigation/MainNavigator";
+import { COLORS } from "./src/constants/theme";
+
+function AppContent() {
+  const { user, isLoading } = useContext(AuthContext);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      {user ? <MainNavigator /> : <AuthNavigator />}
+      <StatusBar style="auto" />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>SplitSmart</Text>
-      <Text style={styles.subtitle}>Smart Expense Splitter</Text>
-      <StatusBar style="auto" />
-    </View>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#6366F1",
-  },
-  subtitle: {
-    color: "#6B7280",
-    marginTop: 8,
+    alignItems: "center",
+    backgroundColor: COLORS.white,
   },
 });
