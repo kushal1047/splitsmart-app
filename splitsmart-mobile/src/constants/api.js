@@ -1,6 +1,6 @@
 // Replace with your computer's local IP address
 // Find it by running 'ipconfig' in Windows CMD and look for IPv4 Address
-const API_BASE_URL = "http://localhost:5088/api";
+const API_BASE_URL = "https://e6e2483834e3.ngrok-free.app/api";
 
 export const API_ENDPOINTS = {
   // Auth
