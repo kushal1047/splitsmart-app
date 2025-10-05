@@ -358,3 +358,205 @@ export default function AddExpenseScreen({ navigation, route }) {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: SIZES.md,
+    paddingTop: SIZES.xxxl,
+    paddingBottom: SIZES.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  cancelButton: {
+    fontSize: 16,
+    color: COLORS.primary,
+    width: 60,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.dark,
+  },
+  content: {
+    flex: 1,
+    padding: SIZES.lg,
+  },
+  inputContainer: {
+    marginBottom: SIZES.xl,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.dark,
+    marginBottom: SIZES.xs,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 12,
+    padding: SIZES.md,
+    fontSize: 16,
+    backgroundColor: COLORS.light,
+  },
+  amountInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  currencySymbol: {
+    position: "absolute",
+    left: SIZES.md,
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.dark,
+    zIndex: 1,
+  },
+  amountInput: {
+    paddingLeft: SIZES.xl,
+    flex: 1,
+  },
+  categoryContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: SIZES.xs,
+  },
+  categoryChip: {
+    paddingVertical: SIZES.xs,
+    paddingHorizontal: SIZES.md,
+    backgroundColor: COLORS.light,
+    borderRadius: 20,
+    marginRight: SIZES.xs,
+    marginBottom: SIZES.xs,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  categoryChipActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  categoryChipText: {
+    fontSize: 14,
+    color: COLORS.gray,
+  },
+  categoryChipTextActive: {
+    color: COLORS.white,
+    fontWeight: "600",
+  },
+  memberContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: SIZES.xs,
+  },
+  memberChip: {
+    paddingVertical: SIZES.xs,
+    paddingHorizontal: SIZES.md,
+    backgroundColor: COLORS.light,
+    borderRadius: 20,
+    marginRight: SIZES.xs,
+    marginBottom: SIZES.xs,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  memberChipActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  memberChipText: {
+    fontSize: 14,
+    color: COLORS.gray,
+  },
+  memberChipTextActive: {
+    color: COLORS.white,
+    fontWeight: "600",
+  },
+  splitTypeContainer: {
+    flexDirection: "row",
+    marginTop: SIZES.xs,
+  },
+  splitTypeButton: {
+    flex: 1,
+    paddingVertical: SIZES.sm,
+    backgroundColor: COLORS.light,
+    borderRadius: 8,
+    marginRight: SIZES.xs,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  splitTypeButtonActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  splitTypeText: {
+    fontSize: 14,
+    color: COLORS.gray,
+    fontWeight: "500",
+  },
+  splitTypeTextActive: {
+    color: COLORS.white,
+    fontWeight: "600",
+  },
+  splitPreview: {
+    backgroundColor: COLORS.light,
+    padding: SIZES.md,
+    borderRadius: 8,
+    marginTop: SIZES.xs,
+  },
+  splitPreviewText: {
+    fontSize: 14,
+    color: COLORS.dark,
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  splitInputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: SIZES.sm,
+  },
+  splitInputLabel: {
+    fontSize: 14,
+    color: COLORS.dark,
+    flex: 1,
+  },
+  splitInput: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 8,
+    padding: SIZES.sm,
+    fontSize: 14,
+    backgroundColor: COLORS.light,
+    width: 100,
+    textAlign: "right",
+  },
+  percentageInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  percentageSymbol: {
+    marginLeft: SIZES.xs,
+    fontSize: 14,
+    color: COLORS.gray,
+  },
+  button: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    padding: SIZES.md,
+    alignItems: "center",
+    marginTop: SIZES.lg,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
