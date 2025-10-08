@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   amountInput: {
-    paddingLeft: SIZES.xl,
+    paddingLeft: SIZES.xxl,
     flex: 1,
   },
   categoryContainer: {
