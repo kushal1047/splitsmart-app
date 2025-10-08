@@ -28,3 +28,22 @@ export const FONTS = {
   bold: "System",
   semiBold: "System",
 };
+
+export const EXPENSE_CATEGORIES = [
+  "General",
+  "Food",
+  "Transportation",
+  "Entertainment",
+  "Utilities",
+  "Rent",
+  "Shopping",
+  "Healthcare",
+  "Travel",
+  "Other",
+];
+
+export const SPLIT_TYPES = {
+  EQUAL: "Equal",
+  UNEQUAL: "Unequal",
+  PERCENTAGE: "Percentage",
+};
