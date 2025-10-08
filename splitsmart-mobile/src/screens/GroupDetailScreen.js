@@ -161,6 +161,22 @@ export default function GroupDetailScreen({ navigation, route }) {
           </Text>
         </View>
       ))}
+
+      {balances.some((b) => b.balance !== 0) && (
+        <TouchableOpacity
+          style={styles.settlementButton}
+          onPress={() =>
+            navigation.navigate("Settlements", {
+              groupId,
+              groupName: group?.name,
+            })
+          }
+        >
+          <Text style={styles.settlementButtonText}>
+            📊 View Settlement Plan
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -514,5 +530,17 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: COLORS.white,
     fontWeight: "300",
+  },
+  settlementButton: {
+    backgroundColor: COLORS.success,
+    borderRadius: 12,
+    padding: SIZES.md,
+    alignItems: "center",
+    marginTop: SIZES.md,
+  },
+  settlementButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
