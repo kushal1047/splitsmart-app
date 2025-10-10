@@ -82,9 +82,18 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.greeting}>Hello, {user?.name}!</Text>
           <Text style={styles.subtitle}>Your expense groups</Text>
         </View>
-        <TouchableOpacity onPress={logout} style={styles.logoutButton}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Profile")}
+            style={styles.profileButton}
+          >
+            <View style={styles.profileIcon}>
+              <Text style={styles.profileIconText}>
+                {user?.name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
@@ -132,9 +141,29 @@ const styles = StyleSheet.create({
     paddingTop: SIZES.xxxl,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+  },
+  headerButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  profileButton: {
+    marginLeft: SIZES.sm,
+  },
+  profileIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.primary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  profileIconText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
   },
   greeting: {
     fontSize: 24,
@@ -145,17 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.gray,
     marginTop: 4,
-  },
-  logoutButton: {
-    paddingVertical: SIZES.xs,
-    paddingHorizontal: SIZES.md,
-    backgroundColor: COLORS.light,
-    borderRadius: 8,
-  },
-  logoutText: {
-    color: COLORS.danger,
-    fontSize: 14,
-    fontWeight: "600",
   },
   listContent: {
     padding: SIZES.md,
