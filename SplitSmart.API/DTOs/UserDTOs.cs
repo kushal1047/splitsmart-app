@@ -26,4 +26,11 @@ namespace SplitSmart.API.DTOs
         [MinLength(6)]
         public string NewPassword { get; set; } = string.Empty;
     }
+
+    public class UpdateProfileDto
+    {
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
+    }
 }

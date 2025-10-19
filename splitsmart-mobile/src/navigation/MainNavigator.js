@@ -6,6 +6,9 @@ import GroupDetailScreen from "../screens/GroupDetailScreen";
 import AddExpenseScreen from "../screens/AddExpenseScreen";
 import SettlementsScreen from "../screens/SettlementsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
+import ChangePasswordScreen from "../screens/ChangePasswordScreen";
+import HelpSupportScreen from "../screens/HelpSupportScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +25,9 @@ export default function MainNavigator() {
       <Stack.Screen name="AddExpense" component={AddExpenseScreen} />
       <Stack.Screen name="Settlements" component={SettlementsScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
     </Stack.Navigator>
   );
 }

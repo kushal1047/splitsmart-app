@@ -51,12 +51,18 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate("EditProfile")}
+          >
             <Text style={styles.menuText}>Edit Profile</Text>
             <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate("ChangePassword")}
+          >
             <Text style={styles.menuText}>Change Password</Text>
             <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
@@ -65,18 +71,11 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate("HelpSupport")}
+          >
             <Text style={styles.menuText}>Help & Support</Text>
-            <Text style={styles.menuArrow}>→</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Terms of Service</Text>
-            <Text style={styles.menuArrow}>→</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuText}>Privacy Policy</Text>
             <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
         </View>

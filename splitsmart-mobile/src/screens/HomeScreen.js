@@ -7,21 +7,31 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  Alert,
+  Animated,
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
 import api from "../services/api";
 import { API_ENDPOINTS } from "../constants/api";
+import { groupService } from "../services/groupService";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function HomeScreen({ navigation }) {
   const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
+  // Add useFocusEffect to refresh when screen is focused
   useEffect(() => {
-    fetchGroups();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchGroups();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const fetchGroups = async () => {
     try {
@@ -40,31 +50,80 @@ export default function HomeScreen({ navigation }) {
     fetchGroups();
   };
 
+  const handleDeleteGroup = (groupId, groupName) => {
+    Alert.alert(
+      "Delete Group",
+      `Are you sure you want to delete "${groupName}"? This will delete all expenses in this group.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await groupService.deleteGroup(groupId);
+              Alert.alert("Success", "Group deleted successfully");
+              fetchGroups();
+            } catch (error) {
+              Alert.alert("Error", error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const renderRightActions = (progress, dragX, item) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: "clamp",
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteGroup(item.id, item.name)}
+      >
+        <Animated.View style={{ transform: [{ translateX: trans }] }}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
   const renderGroupItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.groupCard}
-      onPress={() => navigation.navigate("GroupDetail", { groupId: item.id })}
+    <Swipeable
+      renderRightActions={(progress, dragX) =>
+        renderRightActions(progress, dragX, item)
+      }
+      overshootRight={false}
     >
-      <View style={styles.groupHeader}>
-        <Text style={styles.groupName}>{item.name}</Text>
-        <View style={styles.memberBadge}>
-          <Text style={styles.memberCount}>{item.memberCount} members</Text>
+      <TouchableOpacity
+        style={styles.groupCard}
+        onPress={() => navigation.navigate("GroupDetail", { groupId: item.id })}
+      >
+        <View style={styles.groupHeader}>
+          <Text style={styles.groupName}>{item.name}</Text>
+          <View style={styles.memberBadge}>
+            <Text style={styles.memberCount}>{item.memberCount} members</Text>
+          </View>
         </View>
-      </View>
 
-      {item.description && (
-        <Text style={styles.groupDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
-      )}
+        {item.description && (
+          <Text style={styles.groupDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
 
-      <View style={styles.groupFooter}>
-        <Text style={styles.totalExpenses}>
-          Total: ${item.totalExpenses.toFixed(2)}
-        </Text>
-        <Text style={styles.createdBy}>by {item.createdByName}</Text>
-      </View>
-    </TouchableOpacity>
+        <View style={styles.groupFooter}>
+          <Text style={styles.totalExpenses}>
+            Total: ${item.totalExpenses.toFixed(2)}
+          </Text>
+          <Text style={styles.createdBy}>by {item.createdByName}</Text>
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
   );
 
   if (isLoading) {
@@ -76,7 +135,7 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hello, {user?.name}!</Text>
@@ -120,7 +179,7 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -145,6 +204,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
+  greeting: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.dark,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.gray,
+    marginTop: 4,
+  },
   headerButtons: {
     flexDirection: "row",
     alignItems: "center",
@@ -164,16 +233,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-  },
-  greeting: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.dark,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: COLORS.gray,
-    marginTop: 4,
   },
   listContent: {
     padding: SIZES.md,
@@ -270,5 +329,19 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: COLORS.white,
     fontWeight: "300",
+  },
+  deleteButton: {
+    backgroundColor: COLORS.danger,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    marginBottom: SIZES.md,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteButtonText: {
+    color: COLORS.white,
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

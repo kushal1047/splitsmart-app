@@ -7,5 +7,8 @@ namespace SplitSmart.API.Interfaces
         Task<AuthResponseDto?> Register(RegisterDto registerDto);
         Task<AuthResponseDto?> Login(LoginDto loginDto);
         Task<UserProfileDto?> GetUserById(int userId);
+
+        Task<bool> UpdateProfile(int userId, string name);
+        Task<bool> ChangePassword(int userId, string currentPassword, string newPassword);
     }
 }

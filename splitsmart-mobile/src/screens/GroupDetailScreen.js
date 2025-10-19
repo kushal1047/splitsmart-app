@@ -13,6 +13,9 @@ import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
 import { groupService } from "../services/groupService";
 import { expenseService } from "../services/expenseService";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Animated } from "react-native";
 
 export default function GroupDetailScreen({ navigation, route }) {
   const { groupId } = route.params;
@@ -27,6 +30,14 @@ export default function GroupDetailScreen({ navigation, route }) {
   useEffect(() => {
     fetchGroupData();
   }, [groupId]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchGroupData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const fetchGroupData = async () => {
     try {
@@ -107,6 +118,25 @@ export default function GroupDetailScreen({ navigation, route }) {
     );
   }
 
+  const renderRightActions = (progress, dragX, expenseId) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: "clamp",
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteExpenseButton}
+        onPress={() => handleDeleteExpense(expenseId)}
+      >
+        <Animated.View style={{ transform: [{ translateX: trans }] }}>
+          <Text style={styles.deleteExpenseButtonText}>Delete</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
   const renderExpensesTab = () => (
     <View style={styles.tabContent}>
       {expenses.length === 0 ? (
@@ -118,29 +148,33 @@ export default function GroupDetailScreen({ navigation, route }) {
         </View>
       ) : (
         expenses.map((expense) => (
-          <TouchableOpacity
+          <Swipeable
             key={expense.id}
-            style={styles.expenseCard}
-            onLongPress={() => handleDeleteExpense(expense.id)}
+            renderRightActions={(progress, dragX) =>
+              renderRightActions(progress, dragX, expense.id)
+            }
+            overshootRight={false}
           >
-            <View style={styles.expenseHeader}>
-              <Text style={styles.expenseDescription}>
-                {expense.description}
+            <TouchableOpacity style={styles.expenseCard}>
+              <View style={styles.expenseHeader}>
+                <Text style={styles.expenseDescription}>
+                  {expense.description}
+                </Text>
+                <Text style={styles.expenseAmount}>
+                  ${expense.amount.toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.expenseFooter}>
+                <Text style={styles.expenseCategory}>{expense.category}</Text>
+                <Text style={styles.expensePaidBy}>
+                  Paid by {expense.paidByName}
+                </Text>
+              </View>
+              <Text style={styles.expenseDate}>
+                {new Date(expense.expenseDate).toLocaleDateString()}
               </Text>
-              <Text style={styles.expenseAmount}>
-                ${expense.amount.toFixed(2)}
-              </Text>
-            </View>
-            <View style={styles.expenseFooter}>
-              <Text style={styles.expenseCategory}>{expense.category}</Text>
-              <Text style={styles.expensePaidBy}>
-                Paid by {expense.paidByName}
-              </Text>
-            </View>
-            <Text style={styles.expenseDate}>
-              {new Date(expense.expenseDate).toLocaleDateString()}
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </Swipeable>
         ))
       )}
     </View>
@@ -204,7 +238,7 @@ export default function GroupDetailScreen({ navigation, route }) {
   );
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>← Back</Text>
@@ -286,7 +320,7 @@ export default function GroupDetailScreen({ navigation, route }) {
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -311,6 +345,20 @@ const styles = StyleSheet.create({
     paddingBottom: SIZES.md,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+  },
+  deleteExpenseButton: {
+    backgroundColor: COLORS.danger,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    marginBottom: SIZES.md,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteExpenseButtonText: {
+    color: COLORS.white,
+    fontWeight: "600",
+    fontSize: 14,
   },
   backButton: {
     fontSize: 16,

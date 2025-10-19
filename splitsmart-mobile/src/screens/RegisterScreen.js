@@ -13,6 +13,11 @@ import {
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
+import {
+  validateEmail,
+  validatePassword,
+  validateName,
+} from "../utils/validators";
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -23,13 +28,23 @@ export default function RegisterScreen({ navigation }) {
   const { register } = useContext(AuthContext);
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+    // Validate name
+    const nameValidation = validateName(name);
+    if (!nameValidation.valid) {
+      Alert.alert("Error", nameValidation.message);
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+    // Validate email
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.valid) {
+      Alert.alert("Error", passwordValidation.message);
       return;
     }
 
@@ -39,7 +54,7 @@ export default function RegisterScreen({ navigation }) {
     }
 
     setIsLoading(true);
-    const result = await register(name, email, password);
+    const result = await register(name.trim(), email.trim(), password);
     setIsLoading(false);
 
     if (!result.success) {

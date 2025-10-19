@@ -14,6 +14,12 @@ import {
 import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
 import { expenseService } from "../services/expenseService";
+import {
+  validateExpenseDescription,
+  validateAmount,
+  validateSplitAmounts,
+  validateSplitPercentages,
+} from "../utils/validators";
 
 const CATEGORIES = [
   "General",
@@ -51,16 +57,21 @@ export default function AddExpenseScreen({ navigation, route }) {
   };
 
   const handleCreateExpense = async () => {
-    if (!description.trim()) {
-      Alert.alert("Error", "Please enter a description");
+    // Validate description
+    const descValidation = validateExpenseDescription(description);
+    if (!descValidation.valid) {
+      Alert.alert("Error", descValidation.message);
+      return;
+    }
+
+    // Validate amount
+    const amountValidation = validateAmount(amount);
+    if (!amountValidation.valid) {
+      Alert.alert("Error", amountValidation.message);
       return;
     }
 
     const parsedAmount = parseFloat(amount);
-    if (!parsedAmount || parsedAmount <= 0) {
-      Alert.alert("Error", "Please enter a valid amount");
-      return;
-    }
 
     if (selectedMembers.length === 0) {
       Alert.alert("Error", "Please select at least one member to split with");
@@ -83,12 +94,9 @@ export default function AddExpenseScreen({ navigation, route }) {
         percentage: null,
       }));
 
-      const totalSplit = splits.reduce((sum, s) => sum + s.amount, 0);
-      if (Math.abs(totalSplit - parsedAmount) > 0.01) {
-        Alert.alert(
-          "Error",
-          `Split amounts must equal ${parsedAmount.toFixed(2)}`
-        );
+      const validation = validateSplitAmounts(splits, parsedAmount);
+      if (!validation.valid) {
+        Alert.alert("Error", validation.message);
         return;
       }
     } else if (splitType === "Percentage") {
@@ -98,9 +106,9 @@ export default function AddExpenseScreen({ navigation, route }) {
         percentage: parseFloat(customPercentages[userId]) || 0,
       }));
 
-      const totalPercentage = splits.reduce((sum, s) => sum + s.percentage, 0);
-      if (Math.abs(totalPercentage - 100) > 0.01) {
-        Alert.alert("Error", "Percentages must add up to 100%");
+      const validation = validateSplitPercentages(splits);
+      if (!validation.valid) {
+        Alert.alert("Error", validation.message);
         return;
       }
     }

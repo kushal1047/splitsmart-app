@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -8,38 +8,39 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
-import { groupService } from "../services/groupService";
-import { validateGroupName } from "../utils/validators";
+import { validateName } from "../utils/validators";
 
-export default function CreateGroupScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+export default function EditProfileScreen({ navigation }) {
+  const { user, updateProfile } = useContext(AuthContext);
+  const [name, setName] = useState(user?.name || "");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateGroup = async () => {
-    const validation = validateGroupName(name);
+  const handleSave = async () => {
+    const validation = validateName(name);
     if (!validation.valid) {
       Alert.alert("Error", validation.message);
       return;
     }
 
+    if (name.trim() === user?.name) {
+      Alert.alert("Info", "No changes made");
+      return;
+    }
+
     setIsLoading(true);
-    try {
-      await groupService.createGroup(name.trim(), description.trim());
-      Alert.alert("Success", "Group created successfully", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
+    const result = await updateProfile(name.trim());
+    setIsLoading(false);
+
+    if (result.success) {
+      Alert.alert("Success", "Profile updated successfully", [
+        { text: "OK", onPress: () => navigation.goBack() },
       ]);
-    } catch (error) {
-      Alert.alert("Error", error);
-    } finally {
-      setIsLoading(false);
+    } else {
+      Alert.alert("Error", result.error);
     }
   };
 
@@ -50,49 +51,46 @@ export default function CreateGroupScreen({ navigation }) {
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelButton}>Cancel</Text>
+          <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>New Group</Text>
+        <Text style={styles.headerTitle}>Edit Profile</Text>
         <View style={{ width: 60 }} />
       </View>
 
-      <ScrollView style={styles.content}>
+      <View style={styles.content}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Group Name *</Text>
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g., Roommates, Trip to Paris"
             value={name}
             onChangeText={setName}
+            placeholder="Enter your name"
             editable={!isLoading}
           />
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Description (Optional)</Text>
+          <Text style={styles.label}>Email</Text>
           <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="What is this group for?"
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={4}
-            editable={!isLoading}
+            style={[styles.input, styles.disabledInput]}
+            value={user?.email}
+            editable={false}
           />
+          <Text style={styles.helperText}>Email cannot be changed</Text>
         </View>
 
         <TouchableOpacity
           style={[styles.button, isLoading && styles.buttonDisabled]}
-          onPress={handleCreateGroup}
+          onPress={handleSave}
           disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator color={COLORS.white} />
           ) : (
-            <Text style={styles.buttonText}>Create Group</Text>
+            <Text style={styles.buttonText}>Save Changes</Text>
           )}
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  cancelButton: {
+  backButton: {
     fontSize: 16,
     color: COLORS.primary,
     width: 60,
@@ -143,9 +141,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: COLORS.light,
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
+  disabledInput: {
+    backgroundColor: COLORS.border,
+    color: COLORS.gray,
+  },
+  helperText: {
+    fontSize: 12,
+    color: COLORS.gray,
+    marginTop: SIZES.xs,
   },
   button: {
     backgroundColor: COLORS.primary,

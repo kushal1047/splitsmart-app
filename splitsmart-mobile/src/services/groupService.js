@@ -1,5 +1,6 @@
 import api from "./api";
 import { API_ENDPOINTS } from "../constants/api";
+import { handleApiError } from "../utils/errorHandler";
 
 export const groupService = {
   getAllGroups: async () => {
@@ -7,7 +8,7 @@ export const groupService = {
       const response = await api.get(API_ENDPOINTS.GROUPS);
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to fetch groups";
+      throw handleApiError(error);
     }
   },
 
@@ -16,7 +17,7 @@ export const groupService = {
       const response = await api.get(API_ENDPOINTS.GROUP_DETAIL(groupId));
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to fetch group details";
+      throw handleApiError(error);
     }
   },
 
@@ -28,7 +29,7 @@ export const groupService = {
       });
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to create group";
+      throw handleApiError(error);
     }
   },
 
@@ -40,7 +41,7 @@ export const groupService = {
       });
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to update group";
+      throw handleApiError(error);
     }
   },
 
@@ -49,7 +50,7 @@ export const groupService = {
       const response = await api.delete(API_ENDPOINTS.GROUP_DETAIL(groupId));
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to delete group";
+      throw handleApiError(error);
     }
   },
 
@@ -60,7 +61,7 @@ export const groupService = {
       });
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to add member";
+      throw handleApiError(error);
     }
   },
 
@@ -71,7 +72,7 @@ export const groupService = {
       );
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to remove member";
+      throw handleApiError(error);
     }
   },
 
@@ -80,7 +81,7 @@ export const groupService = {
       const response = await api.get(API_ENDPOINTS.GROUP_BALANCES(groupId));
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Failed to fetch balances";
+      throw handleApiError(error);
     }
   },
 };

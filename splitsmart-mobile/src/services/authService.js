@@ -1,6 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import api from "./api";
 import { API_ENDPOINTS } from "../constants/api";
+import { handleApiError } from "../utils/errorHandler";
 
 export const authService = {
   register: async (name, email, password) => {
@@ -21,7 +22,7 @@ export const authService = {
 
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Registration failed";
+      throw handleApiError(error);
     }
   },
 
@@ -42,7 +43,7 @@ export const authService = {
 
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || "Login failed";
+      throw handleApiError(error);
     }
   },
 
@@ -56,7 +57,7 @@ export const authService = {
       const response = await api.get(API_ENDPOINTS.ME);
       return response.data;
     } catch (error) {
-      throw error;
+      throw handleApiError(error);
     }
   },
 
@@ -67,5 +68,28 @@ export const authService = {
   getUserData: async () => {
     const userData = await SecureStore.getItemAsync("userData");
     return userData ? JSON.parse(userData) : null;
+  },
+
+  updateProfile: async (name) => {
+    try {
+      const response = await api.put(API_ENDPOINTS.UPDATE_PROFILE, { name });
+      // Update stored user data
+      await SecureStore.setItemAsync("userData", JSON.stringify(response.data));
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  },
+
+  changePassword: async (currentPassword, newPassword) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.CHANGE_PASSWORD, {
+        currentPassword,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
 };

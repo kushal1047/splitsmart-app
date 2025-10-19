@@ -8,33 +8,40 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
 } from "react-native";
 import { COLORS, SIZES } from "../constants/theme";
-import { groupService } from "../services/groupService";
-import { validateGroupName } from "../utils/validators";
+import { validatePassword } from "../utils/validators";
+import { authService } from "../services/authService";
 
-export default function CreateGroupScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+export default function ChangePasswordScreen({ navigation }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateGroup = async () => {
-    const validation = validateGroupName(name);
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    const validation = validatePassword(newPassword);
     if (!validation.valid) {
       Alert.alert("Error", validation.message);
       return;
     }
 
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "New passwords do not match");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await groupService.createGroup(name.trim(), description.trim());
-      Alert.alert("Success", "Group created successfully", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
+      await authService.changePassword(currentPassword, newPassword);
+      Alert.alert("Success", "Password changed successfully", [
+        { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
       Alert.alert("Error", error);
@@ -50,49 +57,61 @@ export default function CreateGroupScreen({ navigation }) {
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelButton}>Cancel</Text>
+          <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>New Group</Text>
+        <Text style={styles.headerTitle}>Change Password</Text>
         <View style={{ width: 60 }} />
       </View>
 
-      <ScrollView style={styles.content}>
+      <View style={styles.content}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Group Name *</Text>
+          <Text style={styles.label}>Current Password</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g., Roommates, Trip to Paris"
-            value={name}
-            onChangeText={setName}
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+            placeholder="Enter current password"
+            secureTextEntry
             editable={!isLoading}
           />
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Description (Optional)</Text>
+          <Text style={styles.label}>New Password</Text>
           <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="What is this group for?"
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={4}
+            style={styles.input}
+            value={newPassword}
+            onChangeText={setNewPassword}
+            placeholder="Enter new password"
+            secureTextEntry
+            editable={!isLoading}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Confirm New Password</Text>
+          <TextInput
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm new password"
+            secureTextEntry
             editable={!isLoading}
           />
         </View>
 
         <TouchableOpacity
           style={[styles.button, isLoading && styles.buttonDisabled]}
-          onPress={handleCreateGroup}
+          onPress={handleChangePassword}
           disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator color={COLORS.white} />
           ) : (
-            <Text style={styles.buttonText}>Create Group</Text>
+            <Text style={styles.buttonText}>Change Password</Text>
           )}
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -112,7 +131,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  cancelButton: {
+  backButton: {
     fontSize: 16,
     color: COLORS.primary,
     width: 60,
@@ -142,10 +161,6 @@ const styles = StyleSheet.create({
     padding: SIZES.md,
     fontSize: 16,
     backgroundColor: COLORS.light,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
   },
   button: {
     backgroundColor: COLORS.primary,

@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
 import { COLORS, SIZES } from "../constants/theme";
+import { validateEmail } from "../utils/validators";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -26,8 +27,13 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
     setIsLoading(true);
-    const result = await login(email, password);
+    const result = await login(email.trim(), password);
     setIsLoading(false);
 
     if (!result.success) {
