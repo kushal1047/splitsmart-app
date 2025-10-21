@@ -6,9 +6,11 @@ using SplitSmart.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Set up basic API services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Swagger with JWT authentication
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -37,18 +39,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Database configuration
+// Connect to MySQL database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// Register services
+// Register our custom services
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 
-// CORS configuration
+// Allow requests from mobile app (development only)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -60,7 +62,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Set up request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -68,11 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

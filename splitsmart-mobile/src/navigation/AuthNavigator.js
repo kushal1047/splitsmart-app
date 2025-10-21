@@ -5,11 +5,12 @@ import RegisterScreen from "../screens/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 
+// Navigation stack for unauthenticated users
 export default function AuthNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: false, // Using custom headers in each screen
       }}
     >
       <Stack.Screen name="Login" component={LoginScreen} />

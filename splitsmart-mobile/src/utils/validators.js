@@ -1,8 +1,10 @@
+// Basic email validation using regex
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
+// Password validation - minimum 6 characters
 export const validatePassword = (password) => {
   if (password.length < 6) {
     return { valid: false, message: "Password must be at least 6 characters" };
@@ -10,6 +12,7 @@ export const validatePassword = (password) => {
   return { valid: true };
 };
 
+// Name validation - required and minimum 2 characters
 export const validateName = (name) => {
   if (!name || name.trim().length === 0) {
     return { valid: false, message: "Name is required" };
@@ -20,6 +23,7 @@ export const validateName = (name) => {
   return { valid: true };
 };
 
+// Amount validation - must be positive number under $1M
 export const validateAmount = (amount) => {
   const numAmount = parseFloat(amount);
   if (isNaN(numAmount) || numAmount <= 0) {
@@ -34,6 +38,7 @@ export const validateAmount = (amount) => {
   return { valid: true };
 };
 
+// Group name validation - required and max 100 characters
 export const validateGroupName = (name) => {
   if (!name || name.trim().length === 0) {
     return { valid: false, message: "Group name is required" };
@@ -44,6 +49,7 @@ export const validateGroupName = (name) => {
   return { valid: true };
 };
 
+// Expense description validation - required and max 200 characters
 export const validateExpenseDescription = (description) => {
   if (!description || description.trim().length === 0) {
     return { valid: false, message: "Description is required" };
@@ -57,6 +63,7 @@ export const validateExpenseDescription = (description) => {
   return { valid: true };
 };
 
+// Validate that split amounts add up to the total (with small tolerance for rounding)
 export const validateSplitAmounts = (splits, totalAmount) => {
   const total = splits.reduce(
     (sum, split) => sum + parseFloat(split.amount || 0),
@@ -75,6 +82,7 @@ export const validateSplitAmounts = (splits, totalAmount) => {
   return { valid: true };
 };
 
+// Validate that split percentages add up to 100% (with small tolerance for rounding)
 export const validateSplitPercentages = (splits) => {
   const total = splits.reduce(
     (sum, split) => sum + parseFloat(split.percentage || 0),

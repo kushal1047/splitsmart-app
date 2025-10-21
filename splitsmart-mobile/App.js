@@ -7,9 +7,11 @@ import AuthNavigator from "./src/navigation/AuthNavigator";
 import MainNavigator from "./src/navigation/MainNavigator";
 import { COLORS } from "./src/constants/theme";
 
+// Main app content that decides which navigator to show
 function AppContent() {
   const { user, isLoading } = useContext(AuthContext);
 
+  // Show loading spinner while checking auth status
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -18,6 +20,7 @@ function AppContent() {
     );
   }
 
+  // Show main app if logged in, otherwise show auth screens
   return (
     <NavigationContainer>
       {user ? <MainNavigator /> : <AuthNavigator />}

@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
+// Set up axios instance with default config
 const api = axios.create({
   timeout: 10000,
   headers: {
@@ -8,7 +9,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add token
+// Automatically add auth token to all requests
 api.interceptors.request.use(
   async (config) => {
     const token = await SecureStore.getItemAsync("userToken");
@@ -22,12 +23,12 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
+// Handle auth errors by clearing stored tokens
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
+      // Token expired or invalid - clear local storage
       await SecureStore.deleteItemAsync("userToken");
       await SecureStore.deleteItemAsync("userData");
     }

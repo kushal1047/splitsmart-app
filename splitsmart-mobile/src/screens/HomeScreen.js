@@ -24,7 +24,7 @@ export default function HomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
 
-  // Add useFocusEffect to refresh when screen is focused
+  // Refresh groups when user navigates back to this screen
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       fetchGroups();
@@ -73,6 +73,7 @@ export default function HomeScreen({ navigation }) {
     );
   };
 
+  // Render swipe-to-delete action for group cards
   const renderRightActions = (progress, dragX, item) => {
     const trans = dragX.interpolate({
       inputRange: [-100, 0],
@@ -92,6 +93,7 @@ export default function HomeScreen({ navigation }) {
     );
   };
 
+  // Render individual group card with swipe-to-delete
   const renderGroupItem = ({ item }) => (
     <Swipeable
       renderRightActions={(progress, dragX) =>

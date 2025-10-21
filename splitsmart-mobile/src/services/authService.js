@@ -73,7 +73,7 @@ export const authService = {
   updateProfile: async (name) => {
     try {
       const response = await api.put(API_ENDPOINTS.UPDATE_PROFILE, { name });
-      // Update stored user data
+      // Keep local storage in sync with server
       await SecureStore.setItemAsync("userData", JSON.stringify(response.data));
       return response.data;
     } catch (error) {

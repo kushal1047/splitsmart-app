@@ -20,16 +20,16 @@ namespace SplitSmart.API.Services
 
         public async Task<AuthResponseDto?> Register(RegisterDto registerDto)
         {
-            // Check if user already exists
+            // Make sure email isn't already taken
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
             {
                 return null;
             }
 
-            // Hash password
+            // Hash the password before storing
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
 
-            // Create new user
+            // Set up the new user
             var user = new User
             {
                 Name = registerDto.Name,
@@ -42,7 +42,7 @@ namespace SplitSmart.API.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate token
+            // Create JWT token for the new user
             var token = _jwtHelper.GenerateToken(user);
 
             return new AuthResponseDto
@@ -60,7 +60,7 @@ namespace SplitSmart.API.Services
 
         public async Task<AuthResponseDto?> Login(LoginDto loginDto)
         {
-            // Find user
+            // Look up user by email
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
             if (user == null)
@@ -68,13 +68,13 @@ namespace SplitSmart.API.Services
                 return null;
             }
 
-            // Verify password
+            // Check if password matches
             if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
                 return null;
             }
 
-            // Generate token
+            // Create JWT token for successful login
             var token = _jwtHelper.GenerateToken(user);
 
             return new AuthResponseDto
@@ -131,13 +131,13 @@ namespace SplitSmart.API.Services
                 return false;
             }
 
-            // Verify current password
+            // Make sure they know their current password
             if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
             {
                 return false;
             }
 
-            // Update to new password
+            // Hash and save the new password
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             user.UpdatedAt = DateTime.UtcNow;
 

@@ -2,7 +2,9 @@ import api from "./api";
 import { API_ENDPOINTS } from "../constants/api";
 import { handleApiError } from "../utils/errorHandler";
 
+// Service for managing expense groups
 export const groupService = {
+  // Get all groups for the current user
   getAllGroups: async () => {
     try {
       const response = await api.get(API_ENDPOINTS.GROUPS);
@@ -12,6 +14,7 @@ export const groupService = {
     }
   },
 
+  // Get specific group details including members and expenses
   getGroupById: async (groupId) => {
     try {
       const response = await api.get(API_ENDPOINTS.GROUP_DETAIL(groupId));
@@ -21,6 +24,7 @@ export const groupService = {
     }
   },
 
+  // Create a new expense group
   createGroup: async (name, description) => {
     try {
       const response = await api.post(API_ENDPOINTS.GROUPS, {
@@ -33,6 +37,7 @@ export const groupService = {
     }
   },
 
+  // Update group name and description
   updateGroup: async (groupId, name, description) => {
     try {
       const response = await api.put(API_ENDPOINTS.GROUP_DETAIL(groupId), {
@@ -45,6 +50,7 @@ export const groupService = {
     }
   },
 
+  // Delete a group (this will also delete all associated expenses)
   deleteGroup: async (groupId) => {
     try {
       const response = await api.delete(API_ENDPOINTS.GROUP_DETAIL(groupId));

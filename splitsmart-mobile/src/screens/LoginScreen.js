@@ -21,7 +21,9 @@ export default function LoginScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
 
+  // Handle login form submission
   const handleLogin = async () => {
+    // Basic validation
     if (!email || !password) {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -32,6 +34,7 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
+    // Attempt login
     setIsLoading(true);
     const result = await login(email.trim(), password);
     setIsLoading(false);

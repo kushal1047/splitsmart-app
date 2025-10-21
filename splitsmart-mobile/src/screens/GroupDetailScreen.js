@@ -25,7 +25,7 @@ export default function GroupDetailScreen({ navigation, route }) {
   const [balances, setBalances] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState("expenses"); // expenses, balances, members
+  const [activeTab, setActiveTab] = useState("expenses"); // Track which tab is currently active
 
   useEffect(() => {
     fetchGroupData();
@@ -137,6 +137,7 @@ export default function GroupDetailScreen({ navigation, route }) {
     );
   };
 
+  // Render the expenses tab with swipe-to-delete functionality
   const renderExpensesTab = () => (
     <View style={styles.tabContent}>
       {expenses.length === 0 ? (
@@ -180,6 +181,7 @@ export default function GroupDetailScreen({ navigation, route }) {
     </View>
   );
 
+  // Render the balances tab showing who owes what
   const renderBalancesTab = () => (
     <View style={styles.tabContent}>
       {balances.map((balance) => (
@@ -196,6 +198,7 @@ export default function GroupDetailScreen({ navigation, route }) {
         </View>
       ))}
 
+      {/* Show settlement button only if there are outstanding balances */}
       {balances.some((b) => b.balance !== 0) && (
         <TouchableOpacity
           style={styles.settlementButton}
@@ -214,6 +217,7 @@ export default function GroupDetailScreen({ navigation, route }) {
     </View>
   );
 
+  // Render the members tab with add member functionality
   const renderMembersTab = () => (
     <View style={styles.tabContent}>
       {group?.members.map((member) => (
@@ -228,6 +232,7 @@ export default function GroupDetailScreen({ navigation, route }) {
         </View>
       ))}
 
+      {/* Add member button */}
       <TouchableOpacity
         style={styles.addMemberButton}
         onPress={handleAddMember}

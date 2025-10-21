@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { COLORS, SIZES } from "../constants/theme";
 
+// Reusable button component with multiple variants
 export default function Button({
   title,
   onPress,
@@ -15,6 +16,7 @@ export default function Button({
   disabled = false,
   style,
 }) {
+  // Get button style based on variant
   const getButtonStyle = () => {
     switch (variant) {
       case "secondary":
@@ -28,6 +30,7 @@ export default function Button({
     }
   };
 
+  // Get text style based on variant
   const getTextStyle = () => {
     switch (variant) {
       case "outline":

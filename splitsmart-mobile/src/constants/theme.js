@@ -1,3 +1,4 @@
+// App color palette
 export const COLORS = {
   primary: "#6366F1", // Indigo
   secondary: "#EC4899", // Pink
@@ -12,6 +13,7 @@ export const COLORS = {
   border: "#E5E7EB", // Gray-200
 };
 
+// Consistent spacing values
 export const SIZES = {
   xs: 8,
   sm: 12,
@@ -22,6 +24,7 @@ export const SIZES = {
   xxxl: 40,
 };
 
+// Font family definitions
 export const FONTS = {
   regular: "System",
   medium: "System",
@@ -29,6 +32,7 @@ export const FONTS = {
   semiBold: "System",
 };
 
+// Predefined expense categories
 export const EXPENSE_CATEGORIES = [
   "General",
   "Food",
@@ -42,6 +46,7 @@ export const EXPENSE_CATEGORIES = [
   "Other",
 ];
 
+// Available split calculation methods
 export const SPLIT_TYPES = {
   EQUAL: "Equal",
   UNEQUAL: "Unequal",

@@ -44,6 +44,7 @@ namespace SplitSmart.API.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<UserProfileDto>> GetCurrentUser()
         {
+            // Extract JWT token from Authorization header
             var authHeader = Request.Headers["Authorization"].ToString();
 
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
@@ -73,6 +74,7 @@ namespace SplitSmart.API.Controllers
         [HttpPut("profile")]
         public async Task<ActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
         {
+            // Validate JWT token and get user ID
             var authHeader = Request.Headers["Authorization"].ToString();
 
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
@@ -103,6 +105,7 @@ namespace SplitSmart.API.Controllers
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
+            // Validate JWT token and get user ID
             var authHeader = Request.Headers["Authorization"].ToString();
 
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))

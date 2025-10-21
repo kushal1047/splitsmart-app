@@ -2,7 +2,9 @@ import api from "./api";
 import { API_ENDPOINTS } from "../constants/api";
 import { handleApiError } from "../utils/errorHandler";
 
+// Service for managing expenses and settlements
 export const expenseService = {
+  // Get all expenses for a specific group
   getGroupExpenses: async (groupId) => {
     try {
       const response = await api.get(API_ENDPOINTS.GROUP_EXPENSES(groupId));
@@ -12,6 +14,7 @@ export const expenseService = {
     }
   },
 
+  // Get details of a specific expense
   getExpenseById: async (expenseId) => {
     try {
       const response = await api.get(API_ENDPOINTS.EXPENSE_DETAIL(expenseId));
@@ -21,6 +24,7 @@ export const expenseService = {
     }
   },
 
+  // Create a new expense with splits
   createExpense: async (expenseData) => {
     try {
       const response = await api.post(API_ENDPOINTS.EXPENSES, expenseData);
@@ -30,6 +34,7 @@ export const expenseService = {
     }
   },
 
+  // Delete an expense
   deleteExpense: async (expenseId) => {
     try {
       const response = await api.delete(
@@ -41,6 +46,7 @@ export const expenseService = {
     }
   },
 
+  // Get settlement suggestions for a group
   getSettlements: async (groupId) => {
     try {
       const response = await api.get(API_ENDPOINTS.SETTLEMENTS(groupId));

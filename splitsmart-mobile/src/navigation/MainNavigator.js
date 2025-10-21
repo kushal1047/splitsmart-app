@@ -12,11 +12,12 @@ import HelpSupportScreen from "../screens/HelpSupportScreen";
 
 const Stack = createNativeStackNavigator();
 
+// Main navigation stack for authenticated users
 export default function MainNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: false, // Using custom headers in each screen
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
